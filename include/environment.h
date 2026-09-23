@@ -12,6 +12,7 @@ public:
     Pendulum& get_pendulum(){return pendulum;};
     float get_reward(const P_state& state);
     void pen_draw(sf::RenderWindow& window);
-    StepResult step(float force, float dt);
+    StepResult step(float force, float dt, int &timer);
+    bool is_done(int &timer, int time_limit);
 
 };

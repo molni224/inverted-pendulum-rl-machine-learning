@@ -90,7 +90,7 @@ std::vector<float> NeuralNetwork::softmax(const std::vector<float>& input)
 std::vector<float> NeuralNetwork::forwardpass(const P_state& state)
 {
     float temp_sum;
-    std::vector<float> input(state.data, state.data + 6);
+    std::vector<float> input(state.data, state.data + 5);
     for (size_t a = 1; a < architecture.size()-1; a++)
     {
         std::vector<float> layer(architecture[a]);

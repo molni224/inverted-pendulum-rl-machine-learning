@@ -4,10 +4,14 @@ Agent::Agent(NeuralNetwork network): actor(network) {}
 
 float Agent::get_action(const P_state& state, float base_force)
 {
-    std::vector<float> output = NeuralNetwork::softmax(actor.forwardpass(state));
+    std::vector<float> output = actor.forwardpass(state);
 
-    //output[0] = right output[1] = left
-    return (base_force * (output[0]-output[1]));
+    double force_coef = tanh(output[0]);
+    float mu = base_force * force_coef;
+    float log_std = std::clamp(output[1], -4.0f, 4.0f);
+
+
+    return ();
     
 
 }

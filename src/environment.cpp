@@ -13,14 +13,20 @@ float Environment::get_reward(const P_state& state)
     return reward;
 }
 
-StepResult Environment::step(float force, float dt)
+bool Environment::is_done(int &timer, int time_limit=500)
+{
+    timer++;
+    return (bool)(timer>time_limit);
+}
+
+StepResult Environment::step(float force, float dt, int &timer)
 {
     pendulum.apply_force(force);
     pendulum.movement(dt);
 
     P_state state_after_movement = pendulum.get_state();
     float reward = get_reward(state_after_movement);
-
+    done = is_done(timer);
     return {state_after_movement, reward, done};
 
 }

@@ -27,6 +27,7 @@ public:
     void validate_architecture(const std::vector<int>& architecture);
     
     std::vector<float> forwardpass(const P_state& input);
+    
     void backpass();
 };
 
