@@ -1,7 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-
+#include "trajectory.h"
 #include "pendulum.h"
 #include "agent.h"
 #include "environment.h"
