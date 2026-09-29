@@ -5,8 +5,9 @@
 #include "P_state.h"
 #include <iostream>
 
-struct ActionResoult
+struct ActionResult
 {
+    float raw_sample;
     float force;
     float log_prob;
 };
@@ -22,7 +23,7 @@ private:
 public:
     Agent(NeuralNetwork actor);
 
-    ActionResoult get_action(const P_state& state, float base_force);
+    ActionResult get_action(const P_state& state, float base_force);
 
 
 
