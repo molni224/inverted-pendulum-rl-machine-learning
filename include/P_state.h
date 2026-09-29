@@ -20,29 +20,11 @@ struct StepResult
     bool done;
 };
 
-struct Trajectory
+struct ForwardsCache
 {
-    std::vector<P_state> states;
-    std::vector<float> raw_samples;   // pre-clip sampled force, needed to recompute log_prob's gradient later
-    std::vector<float> log_probs;
-    std::vector<float> rewards;
-
-    void add(P_state state, float raw_sample, float log_prob, float reward)
-    {
-        states.push_back(state);
-        raw_samples.push_back(raw_sample);
-        log_probs.push_back(log_prob);
-        rewards.push_back(reward);
-    }
-
-    void clear()
-    {
-        states.clear();
-        raw_samples.clear();
-        log_probs.clear();
-        rewards.clear();
-    }
-    size_t get_size() const {return states.size();}
+    std::vector<float> inputs;
+    std::vector<float> pre_activation;
+    std::vector<float> activation;
 };
 
 #endif
