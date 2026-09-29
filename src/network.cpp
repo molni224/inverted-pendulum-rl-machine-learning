@@ -91,6 +91,7 @@ std::vector<float> NeuralNetwork::forwardpass(const P_state& state)
 {
     float temp_sum;
     std::vector<float> input(state.data, state.data + 5);
+    std::vector<float> output(state.data, state.data + 5);
     for (size_t a = 1; a < architecture.size()-1; a++)
     {
         std::vector<float> layer(architecture[a]);
@@ -117,6 +118,12 @@ std::vector<float> NeuralNetwork::forwardpass(const P_state& state)
         }
         layer[b] = temp_sum;
     }
-    input = layer;
-    return input;
+    output = layer;
+    return output;
+}
+
+
+std::vector<float> NeuralNetwork::forwardpass_cached(const P_state& input)
+{
+
 }
