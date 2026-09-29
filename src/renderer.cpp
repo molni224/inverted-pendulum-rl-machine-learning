@@ -15,6 +15,8 @@ sf::RenderWindow& Renderer::get_window()
 
 void Renderer::run(Environment& env, Agent& actor)
 {
+    Trajectory traj;
+    traj.clear();
     sf::Clock clock;
     P_state state = env.reset();
     int timer = 0;
@@ -32,18 +34,18 @@ while (window.isOpen())
     // 3. Get dt as SECONDS (e.g., 0.016 at 60 FPS) and restart the clock
     float dt = clock.restart().asSeconds();
     
-    float force = actor.get_action(state, 750.0f);
-    StepResult result = env.step(force, dt, timer);
+    ActionResult action = actor.get_action(state, 750.0f);
+    StepResult result = env.step(action.force, dt, timer);
+    traj.add(state, action.raw_sample, action.log_prob, result.reward);
+
     state = result.state;
-    float reward = result.reward;
     bool done = result.done;
-    std::cout << timer << "\n";
     if (done)
     {
-        env.reset();
+        state = env.reset();
+        traj.clear();
         done = false;
         timer = 0;
-        
     }
 
     env.pen_draw(window);
@@ -51,6 +53,9 @@ while (window.isOpen())
 if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)))
     {
         state = env.reset();
+        traj.clear();
+        done = false;
+        timer = 0;
     }
     
     window.display();
