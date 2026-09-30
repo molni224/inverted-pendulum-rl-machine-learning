@@ -22,9 +22,10 @@ struct StepResult
 
 struct ForwardsCache
 {
-    P_state inputs;
+    std::vector<P_state> inputs;
     std::vector<float> pre_activation;
     std::vector<float> activation;
+
 };
 
 #endif
