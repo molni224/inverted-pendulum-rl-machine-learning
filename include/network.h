@@ -14,6 +14,7 @@ private:
     std::vector<int> architecture;
     std::vector<std::vector<float>> weights;
     std::vector<std::vector<float>> bias;
+    ForwardsCache cache;
    
     
     void initialize_weights();
