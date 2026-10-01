@@ -11,6 +11,8 @@ NeuralNetwork::NeuralNetwork(const std::vector<int>& architecture) : architectur
 
         weights.push_back(std::vector<float>(input_size * output_size));
         bias.push_back(std::vector<float>(output_size, 0.0f)); // initialize bias vectors to 0.0f
+        cache.activation.push_back({});
+        cache.pre_activation.push_back({});
         
     };
     initialize_weights();
@@ -122,8 +124,45 @@ std::vector<float> NeuralNetwork::forwardpass(const P_state& state)
     return output;
 }
 
-
-std::vector<float> NeuralNetwork::forwardpass_cached(const P_state& input)
+// same as normal forwardpass just caching every layer to pre/post_activation vectors
+std::vector<float> NeuralNetwork::forwardpass_cached(const P_state& state)
 {
+        float temp_sum;
+    std::vector<float> input(state.data, state.data + 5);
+    std::vector<float> output(state.data, state.data + 5);
 
+    cache.inputs.push_back(state);
+    
+
+    for (size_t a = 1; a < architecture.size()-1; a++)
+    {
+        std::vector<float> layer(architecture[a]);
+        for (size_t b = 0; b < architecture[a]; b++)
+        {
+            temp_sum = bias[a-1][b];
+            for (size_t c = 0; c < architecture[a-1]; c++)
+            {
+                temp_sum += input[c]*weights[a-1][b * architecture[a-1] + c];
+            }
+            cache.pre_activation[a-1].push_back(temp_sum);
+            layer[b] = ReLU(temp_sum);
+            cache.activation[a-1].push_back(layer[b]);
+        }
+        input = layer;
+    }
+
+    size_t a = architecture.size()-1;
+    std::vector<float> layer(architecture[a]);
+    for (size_t b = 0; b < architecture[a]; b++)
+    {
+        temp_sum = bias[a-1][b];
+        for (size_t c = 0; c < architecture[a-1]; c++)
+        {
+            temp_sum += input[c]*weights[a-1][b * architecture[a-1] + c];
+        }
+        cache.pre_activation[a-1].push_back(temp_sum);
+        layer[b] = temp_sum;
+    }
+    output = layer;
+    return output;
 }
