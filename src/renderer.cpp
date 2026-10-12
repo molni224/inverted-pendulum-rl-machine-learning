@@ -1,14 +1,12 @@
 #include "renderer.h"
 
 
-Renderer::Renderer(): window(sf::VideoMode({1920, 1080}), "Pendulum")
-{
+Renderer::Renderer(): window(sf::VideoMode({1920, 1080}), "Pendulum") {
     windowSize = sf::Vector2f(window.getSize());
     window.setFramerateLimit(60);
 }
 
-sf::RenderWindow& Renderer::get_window()
-{
+sf::RenderWindow& Renderer::get_window() {
     return window;
 }
 

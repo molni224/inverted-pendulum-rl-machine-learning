@@ -1,11 +1,92 @@
 #include "pendulum.h"
 
+Pendulum::Pendulum(Object2D anchor, Object2D bob) : anchor(anchor), bob(bob), init_anchor(anchor), init_bob(bob) {}
 
-Pendulum::Pendulum(sf::Vector2f direction, sf::Vector2f windowsize,float v, sf::Vector2f box_size) : direction(direction), init_direction(direction), init_v(v), init_box_pos(windowsize / 2.f)
+PendulumState Pendulum::get_current_state() {
+    float sin = abs(anchor.pos.x - bob.pos.x) / ROPE_LENGTH;
+    float cos = abs(anchor.pos.y - bob.pos.y) / ROPE_LENGTH;
+
+    float anchor_posx_norm = anchor.pos.x / TRACK_LENGTH;  // Normalized position to the track length between 0 and 1 (left is 0 right is 1)
+
+    PendulumState state(sin, cos, bob.speed, anchor.speed, anchor_posx_norm)
+
+    return state;
+}
+
+void Pendulum::reset() {
+    anchor = init_anchor;
+    bob = init_bob;
+}
+
+void Pendulum::move_anchor(float dt) {
+    Vector2f BASE_VECTOR = {1,0};
+    Vector2f drag_acceleration = abs(anchor.speed) * anchor.speed * ANCHOR_DRAG_COEFF // speed is squared but we need the direction with the sign
+    anchor.speed += (box.acceleration - drag_acceleration) * dt;
+}
+
+void Pendulum::move_bob(float dt) {
+    Vector2f anchor_to_bob = bob.pos - anchor.pos;                  // Vector from the anchor to the bob
+    Vector2f force_direction = {-anchor_to_bob.y, anchor_to_bob.x}  // Flips the vector 90 degrees clockwise
+
+    // Normalize direction vector
+    force_direction = -(force_diretion / force_direction.length);
+
+    float sin = abs(anchor.pos.x - bob.pos.x) / ROPE_LENGTH;
+    float force = sin * BOB_MASS * GRAVITY;
+    float acceleration = force / BOB_MASS
+
+    float inertial_acceleration = sin * bob_acceleration * BOB_MASS / BOB_MASS;
+
+    this->bob.speed += (aceleration - BOB_DRAG_COEFF * abs(this->bob.speed) * this->bob.speed * -(inertial_acceleration)) * dt;   
+}
+
+void Pendulum::correct_length() {
+    Vector2f anchor_to_bob = bob.pos - anchor.pos;       
+    anchor_to_bob = anchor_to_bob/ anchor_to_bob.length();  // Normalize the vector
+    
+    bob.pos= anchor.pos + anchor_to_bob * ROPE_LENGTH;
+}
+
+void Pendulum::move(float dt) {
+    move_anchor(dt);
+    move_bob(dt);
+    correct_length();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Pendulum::Pendulum(sf::Vector2f direction, sf::Vector2f windowsize,float v, sf::Vector2f box_size) 
+    : direction(direction), init_direction(direction), init_v(v), init_box_pos(windowsize / 2.f)
 {
-    //direction
-    //direction = {length,sf::radians(theta)};
-    //theta = theta;
+
     //box
     box.setSize(box_size);
     box.setOrigin(box.getSize() / 2.f);
@@ -18,6 +99,7 @@ Pendulum::Pendulum(sf::Vector2f direction, sf::Vector2f windowsize,float v, sf::
     ball.setFillColor(sf::Color::Red);
     
 }
+
 void Pendulum::reset()
 {
     box.setPosition(init_box_pos);
@@ -92,7 +174,6 @@ void Pendulum::box_movement(float dt)
 
     box_v += (box_acceleration - d_coafficient*box_v*abs(box_v))*dt;
 
-// fix for sticking to wall
 if ((pos.x >= 1910.0f && box_v > 0 && box_acceleration > 0) || (pos.x <= 10.0f && box_v < 0 && box_acceleration < 0))
 {
     box_v = 0;
@@ -109,6 +190,53 @@ void Pendulum::apply_force(float force)
     box_acceleration = force/MASS;
 }
 
+void Pendulum::pen_movement(float dt)
+{
+    //more efficiency
+    float local_v = this->v;
+    float d_coafficient = 0.001f;
+    //vector for calcuating force direction
+    sf::Vector2f calc_direction = (ball.getPosition()-box.getPosition());
+
+    //90 degrees Formula: \((x, y) \rightarrow (y, -x)\) dir.angleTo(BASEVECTOR).asDegrees()
+    sf::Vector2f dir = {calc_direction.y,-calc_direction.x};
+    
+    //normalise and change orientation because lazy -1
+    if (dir.length() != 0)
+    {
+        dir = -(dir/dir.length());      
+    }
+    else
+    {
+        ball.move({0.001f,0});
+        calc_direction = ball.getPosition()-box.getPosition();
+        //recalculating
+        dir = {calc_direction.y,-calc_direction.x};
+        dir = -(dir/dir.length());     
+    }
+    // F=ma && v = a*t
+    float sin_theta = std::sin(get_angle());
+    float F = sin_theta*MASS*GRAVITY;
+    float a = F/MASS;
+    float inertial_acceleration = (sin_theta)*(box_acceleration*MASS)/MASS;
+
+
+    // vel with air resistance
+    local_v += (a - d_coafficient*local_v*abs(local_v)-(inertial_acceleration))*dt;
+    this->v = local_v;
+    //float local_omega = local_v/length;
+    //theta -= local_omega*dt;
+    //sf::Vector2f pos = {length,sf::radians(theta)};
+    
+    
+
+    //std::cout << get_angle() << " | ";// << "|" << direction.y << "\n";
+
+
+    ball.move(local_v*dir*dt);
+
+    //ball.setPosition(pos);
+}
 void Pendulum::pen_movement(float dt)
 {
     //more efficiency
