@@ -1,6 +1,6 @@
 #ifndef PENDULUM_H
 #define PENDULUM_H
-#include "P_state.h"
+#include "structs.h"
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <algorithm>

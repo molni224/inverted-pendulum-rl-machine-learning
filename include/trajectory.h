@@ -1,6 +1,6 @@
 #ifndef TRAJECTORY_H
 #define TRAJECTORY_H
-#include "P_state.h"
+#include "structs.h"
 #include <vector>
 #include <numeric>
 #include <cmath>

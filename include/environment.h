@@ -1,5 +1,5 @@
 #include "pendulum.h"
-#include "P_state.h"
+#include "structs.h"
 
 class Environment
 {

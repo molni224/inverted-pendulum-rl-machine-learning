@@ -2,7 +2,7 @@
 #define AGENT_H
 #include "network.h"
 #include <algorithm>
-#include "P_state.h"
+#include "structs.h"
 #include <iostream>
 
 struct ActionResult

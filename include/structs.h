@@ -1,5 +1,5 @@
-#ifndef P_State_H
-#define P_State_H
+#ifndef STRUCTS_H
+#define STRUCTS_H
 #include <vector>
 union P_state {
 struct 
