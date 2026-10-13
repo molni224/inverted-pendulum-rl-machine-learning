@@ -24,7 +24,8 @@ public:
     Agent(NeuralNetwork actor);
 
     ActionResult get_action(const P_state& state, float base_force);
-
+    const NeuralNetwork& get_network();
+    void clear_network_cache(){actor.clear_cache();}
 
 
 

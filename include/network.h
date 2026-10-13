@@ -26,6 +26,9 @@ public:
     static std::vector<float> softmax(const std::vector<float>& input);
     NeuralNetwork(const std::vector<int>& architecture);
     void validate_architecture(const std::vector<int>& architecture);
+
+    void clear_cache() {cache.clear();}
+    const ForwardsCache& get_cache() const {return cache;}
     
     std::vector<float> forwardpass(const P_state& input);
     std::vector<float> forwardpass_cached(const P_state& input);

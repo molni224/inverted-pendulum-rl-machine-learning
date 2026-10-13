@@ -50,6 +50,26 @@ while (window.isOpen())
 
     env.pen_draw(window);
 
+    // testing cache p to pause and write out cache
+bool pause = false;
+if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)))
+{
+    std::cout << "--------------------------------------------------------------------------------------\n";
+    pause = !pause;
+    for (auto i : actor.get_network().get_cache().activation)
+    {
+        std::cout << "_________________________________________________________________________________________\n";
+        for (auto x : i)
+        {
+            std::cout << x << ' ';
+        }
+        std::cout <<"\n\n";
+    }
+}
+while (pause)
+{
+}
+actor.clear_network_cache();
 if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)))
     {
         state = env.reset();

@@ -2,9 +2,14 @@
 
 Agent::Agent(NeuralNetwork network): actor(network) {}
 
+const NeuralNetwork& Agent::get_network()
+{
+    return actor;
+}
+
 ActionResult Agent::get_action(const P_state& state, float base_force)
 {
-    std::vector<float> output = actor.forwardpass(state);
+    std::vector<float> output = actor.forwardpass_cached(state);
 
     double force_coef = tanh(output[0]);
     float median = base_force * force_coef;
