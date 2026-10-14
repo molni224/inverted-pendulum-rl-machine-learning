@@ -6,8 +6,8 @@ struct
 {
     float sinangle; //sin and cos for continues smooth values
     float cosangle;
-    float v;
-    float box_v;
+    float v_norm;
+    float box_v_norm;
     float box_pos_norm;
 };
     float data[5];
