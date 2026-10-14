@@ -126,7 +126,8 @@ std::vector<float> NeuralNetwork::forwardpass(const P_state& state)
 // same as normal forwardpass just caching every layer to pre/post_activation vectors
 std::vector<float> NeuralNetwork::forwardpass_cached(const P_state& state)
 {
-        float temp_sum;
+    cache.clear();
+    float temp_sum;
     std::vector<float> input(state.data, state.data + 5);
     std::vector<float> output(state.data, state.data + 5);
 
