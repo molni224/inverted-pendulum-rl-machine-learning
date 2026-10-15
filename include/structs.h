@@ -1,81 +1,57 @@
 #ifndef STRUCTS_H
-#define STRUCTs_H
+#define STRUCTS_H
 
 #include <cmath>
 #include <vector>
+#include <array>
 
 #define PI 3.14159265358979323846264338327950288419
 #define GRAVITY 919.f
-#define ANCHOR_DRAG_COEFF 0.001f
-#define BOB_DRAG_COEFF 0.001f
-
-
 
 struct Vector2f {
     float x;
     float y;
-
-    float length() {
-        return std::sqrt(x*x + y*y);
-    }
-
-    // Összeadás és értékadás (v1 += v2)
-    Vector2f& operator+=(const Vector2f& v) {
-        x += v.x;
-        y += v.y;
-        return *this;
-    }
-
-    // Kivonás és értékadás (v1 -= v2)
-    Vector2f& operator-=(const Vector2f& v) {
-        x -= v.x;
-        y -= v.y;
-        return *this;
-    }
     
-    // Sima összeadás (v3 = v1 + v2)
-    Vector2f operator+(const Vector2f& v) const {
-        return Vector2f{x + v.x, y + v.y};
-    }
-
-    // Sima kivonás (v3 = v1 - v2)
-    Vector2f operator-(const Vector2f& v) const {
-        return Vector2f{x - v.x, y - v.y};
-    }
-
-    Vector2f operator-() const {
-        return Vector2f{-x, -y};
-    }
-
-    Vector2f operator+() const {
-        return *this;
-    }
-}; 
+    float length() const { return std::sqrt(x*x + y*y); }
+    
+    Vector2f& operator+=(const Vector2f& v) { x += v.x; y += v.y; return *this; }
+    Vector2f& operator-=(const Vector2f& v) { x -= v.x; y -= v.y; return *this; }
+    Vector2f operator+(const Vector2f& v) const { return Vector2f{x + v.x, y + v.y}; }
+    Vector2f operator-(const Vector2f& v) const { return Vector2f{x - v.x, y - v.y}; }
+    Vector2f operator-() const { return Vector2f{-x, -y}; }
+    Vector2f operator+() const { return *this; }
+    Vector2f operator*(float scalar) const { return Vector2f{x * scalar, y * scalar}; }
+    Vector2f operator/(float scalar) const { return Vector2f{x / scalar, y / scalar}; }
+};
 
 struct Object2D {
     Vector2f position;
     Vector2f speed;
     Vector2f acceleration;
-
 };
 
+/*
+        |\  <- Anchor
+        | \ 
+    cos |  \ 
+        |   \ 
+        |____O  <- Bob
+          sin
+*/
 struct PendulumState {
-    float sin;                   //        |\  <- Anchor
-    float cos;                   //        | \ 
-    float bob_speed;             //    cos |  \ 
-    float anchor_speed;          //        |   \ 
-    float anchor_posx_norm;      //        |____O  <- Bob
-                                 //         sin
+    float sin;                   
+    float cos;                  
+    float bob_speed;             
+    float anchor_speed;          
+    float anchor_posx_norm;      
+                                 
     PendulumState(float sin, float cos, float bob_speed, float anchor_speed, float anchor_pos)
-        : sin(sin), cos(cos), bob_speed(bob_speed), anchor_speed(anchor_speed), anchor_posc_norm(anchor_pos) {}
+        : sin(sin), cos(cos), bob_speed(bob_speed), anchor_speed(anchor_speed), anchor_posx_norm(anchor_pos) {}
+
+    std::array<float, 5> get_attributes() const{
+        return {sin, cos, bob_speed, anchor_speed, anchor_posx_norm};
+    }
 };                               
-
-
-struct StepResult {
-    PendulumState state;
-    float reward;
-    bool is_done;
-};
 
 struct ForwardsCache {
     std::vector<PendulumState> inputs;

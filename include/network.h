@@ -1,34 +1,53 @@
 #ifndef NETWORK_H
 #define NETWORK_H
-#include "P_state.h"
+
+#include "structs.h"
 #include <stdexcept>
 #include <iostream>
 #include <vector>
 #include <random>
 #include <cmath>
+#include <numeric>
 
-class NeuralNetwork
-{
+struct Node {
+    float value = 0;
+    float bias = 0;
+    std::vector<Weight> weights;
+};
+
+struct Weight {
+    float value;
+    Node* source_node;
+
+    Weight(float value, Node* source_node) : value(value), source_node(source_node) {};
+};
+
+class NeuralNetwork {
 private:
-    float l_rate = 0.001f;
-    std::vector<int> architecture;
-    std::vector<std::vector<float>> weights;
-    std::vector<std::vector<float>> bias;
+    static constexpr float LEARNING_RATE = 0.001f;
+    const int INPUT_SIZE;
+    const int OUTPUT_SIZE;
+
+    const std::vector<int> architecture;
+    std::vector<Node> nodes;
+
     ForwardsCache cache;
-   
     
+    void validate_architecture(const std::vector<int>& architecture);
+    void setup_nodes();
     void initialize_weights();
-    
-    
-    
+
+    int get_nodes_index(int column, int row) const;
+
 public:
+    NeuralNetwork(const std::vector<int>& architecture);
+
     static float ReLU(float x);
     static std::vector<float> softmax(const std::vector<float>& input);
-    NeuralNetwork(const std::vector<int>& architecture);
-    void validate_architecture(const std::vector<int>& architecture);
     
-    std::vector<float> forwardpass(const P_state& input);
-    std::vector<float> forwardpass_cached(const P_state& input);
+    std::vector<float> forwardpass(const PendulumState& input);
+    std::vector<float> forwardpass_cached(const PendulumState& input);
+
     void backwardpass();
     float loss_func();
     void backpass();

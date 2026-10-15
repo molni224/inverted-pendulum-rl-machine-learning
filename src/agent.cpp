@@ -2,8 +2,11 @@
 
 Agent::Agent(NeuralNetwork network): actor(network) {}
 
-ActionResult Agent::get_action(const P_state& state, float base_force)
+ActionResult Agent::get_action(const PendulumState& state, float base_force)
 {
+    
+    return {};
+    /*
     std::vector<float> output = actor.forwardpass(state);
 
     double force_coef = tanh(output[0]);
@@ -21,4 +24,5 @@ ActionResult Agent::get_action(const P_state& state, float base_force)
     float log_prob = -0.5f * z * z - log_std - LOG_SQRT_2PI;
 
     return {force, sample, log_prob};
+    */
 }

@@ -1,17 +1,18 @@
-#include "renderer.h"
-#include "network.h"
+#include "simulation.h"
 
 int main() {
-    Simulation sim;
-    
-    Renderer renderer;
-    Pendulum pendulum(sf::Vector2f{200,sf::radians(PI)}, renderer.windowSize);
-
+    // Neural Network
     NeuralNetwork network({5, 32, 32, 2});
     Agent actor(network);
-    Environment env(pendulum);
 
-    //Pendulum pendulum((PI), renderer.windowSize);
-    renderer.run(env, actor);
+    // Pendulum
+    Object2D anchor_init = {{1920.0f / 2.0f, 1080.0f / 2.0f}, {0,0}, {0,0}};
+    Object2D bob_init = {{1920.0f / 2.0f, 1080.0f / 2.0f + 200.0f}, {0,0}, {0,0}};
+    Pendulum pendulum(anchor_init, bob_init);
+    
+    // Simulation
+    Simulation sim(pendulum, actor);
+    sim.run();
+    
     return 0;
 }

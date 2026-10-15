@@ -1,61 +1,43 @@
 #include "renderer.h"
 
-
-Renderer::Renderer(): window(sf::VideoMode({1920, 1080}), "Pendulum") {
-    windowSize = sf::Vector2f(window.getSize());
-    window.setFramerateLimit(60);
+Renderer::Renderer(sf::RenderWindow& window, Pendulum& pendulum) 
+    : window(window), pendulum(pendulum) 
+{
+    config_anchor();
+    config_bob();
 }
 
-sf::RenderWindow& Renderer::get_window() {
-    return window;
+void Renderer::config_anchor() {
+    anchor.setSize({ANCHOR_SIZE, ANCHOR_SIZE});
+    anchor.setOrigin(anchor.getSize() / 2.0f);
+    anchor.setPosition({pendulum.get_anchor().position.x, pendulum.get_anchor().position.y});
 }
 
+void Renderer::config_bob() {
+    bob.setRadius(BOB_RADIUS);
+    bob.setOrigin({BOB_RADIUS, BOB_RADIUS});
+    bob.setFillColor(sf::Color::Red);
+}
 
-void Renderer::run(Environment& env, Agent& actor)
-{
-    Trajectory traj;
-    traj.clear();
-    sf::Clock clock;
-    P_state state = env.reset();
-    int timer = 0;
+void Renderer::update_parts_position() {
+    // Anchor
+    anchor.setPosition({pendulum.get_anchor().position.x, pendulum.get_anchor().position.y});
 
-while (window.isOpen())
-{
-    while (const std::optional<sf::Event> event = window.pollEvent())
-    {
-        if (event->is<sf::Event::Closed>())
-        window.close();
-    }
-    
+    // Rope
+    rope[0].position = {pendulum.get_anchor().position.x, pendulum.get_anchor().position.y};
+    rope[1].position = {pendulum.get_bob().position.x, pendulum.get_bob().position.y};
+
+    // Bob
+    bob.setPosition({pendulum.get_bob().position.x, pendulum.get_bob().position.y});
+}
+
+void Renderer::render() {
     window.clear();
-    
-    // 3. Get dt as SECONDS (e.g., 0.016 at 60 FPS) and restart the clock
-    float dt = clock.restart().asSeconds();
-    
-    ActionResult action = actor.get_action(state, 750.0f);
-    StepResult result = env.step(action.force, dt, timer);
-    traj.add(state, action.raw_sample, action.log_prob, result.reward);
+    update_parts_position();
 
-    state = result.state;
-    bool done = result.done;
-    if (done)
-    {
-        state = env.reset();
-        traj.clear();
-        done = false;
-        timer = 0;
-    }
-
-    env.pen_draw(window);
-
-if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)))
-    {
-        state = env.reset();
-        traj.clear();
-        done = false;
-        timer = 0;
-    }
+    window.draw(rope, 2, sf::PrimitiveType::Lines);
+    window.draw(anchor);
+    window.draw(bob);
     
     window.display();
-}
 }

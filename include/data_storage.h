@@ -1,18 +1,19 @@
-#ifndef TRAJECTORY_H
-#define TRAJECTORY_H
-#include "P_state.h"
+#ifndef DATA_STORAGE_H
+#define DATA_STORAGE_H
+#include "structs.h"
 #include <vector>
 #include <numeric>
 #include <cmath>
 
-struct Trajectory
-{
-    std::vector<P_state> states;
+// AI SHIT needs review
+
+struct SimulationLogContainer {
+    std::vector<PendulumState> states;
     std::vector<float> raw_samples;
     std::vector<float> log_probs;
     std::vector<float> rewards;
 
-    void add(const P_state& state, float raw_sample, float log_prob, float reward)
+    void add(const PendulumState& state, float raw_sample, float log_prob, float reward)
     {
         states.push_back(state);
         raw_samples.push_back(raw_sample);

@@ -2,8 +2,8 @@
 #define AGENT_H
 #include "network.h"
 #include <algorithm>
-#include "P_state.h"
 #include <iostream>
+
 
 struct ActionResult
 {
@@ -23,7 +23,7 @@ private:
 public:
     Agent(NeuralNetwork actor);
 
-    ActionResult get_action(const P_state& state, float base_force);
+    ActionResult get_action(const PendulumState& state, float base_force);
 
 
 
