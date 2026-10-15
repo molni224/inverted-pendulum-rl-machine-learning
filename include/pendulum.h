@@ -5,9 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
-#define GRAVITY 919.f
-#define MASS 1
-#define BOX_MASS 1
+
 
 
 
@@ -15,33 +13,36 @@
 class Pendulum
 {
 private:
+    static constexpr float GRAVITY = 919.f;
+    static constexpr int MASS = 1;
+    static constexpr int BOX_MASS = 1;
+    static constexpr float BALLRADIUS = 25.f;
+    static constexpr float length = 200;
+    static constexpr sf::Vector2f box_size = {20.f,20.f};
+
     sf::Vector2f init_direction;
     sf::Vector2f init_box_pos;
     float init_v;
-    sf::Vertex line[2];
+
     sf::CircleShape ball;
-    static constexpr sf::Vector2f box_size = {20.f,20.f};
-    static constexpr float BALLRADIUS = 25.f;
-    static constexpr float length = 200;
-    float v = 0;
-    //float theta;
     sf::RectangleShape box;
+    sf::Vector2f direction;
+    float v = 0;
     float box_acceleration = 0;
     float box_v = 0;
-    sf::Vector2f direction;
 
 
 public:
 
     Pendulum(sf::Vector2f direction, sf::Vector2f windowsize,float v = 0.f, sf::Vector2f box_size = {20.f, 20.f});
 
-    float get_angle();
-    P_state get_state();
+    float get_angle() const;
+    P_state get_state() const;
 
-    void pen_draw(sf::RenderWindow& window);
-    const sf::RectangleShape& get_box() {return box;};
-    const sf::CircleShape& get_ball() {return ball;};
-    const sf::Vector2f get_direction() {return direction;};
+    void pen_draw(sf::RenderWindow& window) const;
+    const sf::RectangleShape& get_box() const {return box;};
+    const sf::CircleShape& get_ball() const {return ball;};
+    sf::Vector2f get_direction() const {return direction;};
     void reset();
 
 

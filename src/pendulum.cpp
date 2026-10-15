@@ -1,12 +1,9 @@
 #include "pendulum.h"
 
 
-Pendulum::Pendulum(sf::Vector2f direction, sf::Vector2f windowsize,float v, sf::Vector2f box_size) : direction(direction), init_direction(direction), init_v(v), init_box_pos(windowsize / 2.f)
+Pendulum::Pendulum(sf::Vector2f direction, sf::Vector2f windowsize,float v, sf::Vector2f box_size) 
+:  init_direction(direction), init_box_pos(windowsize / 2.f), init_v(v), direction(direction)
 {
-    //direction
-    //direction = {length,sf::radians(theta)};
-    //theta = theta;
-    //box
     box.setSize(box_size);
     box.setOrigin(box.getSize() / 2.f);
     box.setPosition(windowsize / 2.f);
@@ -28,7 +25,7 @@ void Pendulum::reset()
     this->box_acceleration = 0;
 }
 
-float Pendulum::get_angle()
+float Pendulum::get_angle() const
 {
     //base vector for angle calc
     sf::Vector2f BASEVECTOR {0,1};
@@ -41,23 +38,24 @@ float Pendulum::get_angle()
 
 }
 
-P_state Pendulum::get_state()
+P_state Pendulum::get_state() const
 {
     return P_state {
-    static_cast<float>(std::sin(get_angle())),               //float sinangle;
-    static_cast<float>(std::cos(get_angle())),               //float cosangle;
-    this->v,                                                 //float v;
-    this->box_v,                                             //float box_v;
-    (this->box.getPosition().x - 10)/1900,                               //float box_pos_norm;
+    std::sin(get_angle()),                                              //float sinangle;
+    std::cos(get_angle()),                                              //float cosangle;
+    this->v,                                                            //float v;
+    this->box_v,                                                        //float box_v;
+    (this->box.getPosition().x - 10)/1900,                              //float box_pos_norm;
 };
 }
 
-void Pendulum::pen_draw(sf::RenderWindow& window)
+void Pendulum::pen_draw(sf::RenderWindow& window) const
 {
     //line
+    std::array<sf::Vertex, 2> line;    
     line[0].position = box.getPosition();
     line[1].position = ball.getPosition();
-    window.draw(line, 2, sf::PrimitiveType::Lines);
+    window.draw(line.data(), line.size(), sf::PrimitiveType::Lines);
     window.draw(box);
     window.draw(ball);
 }
@@ -85,7 +83,6 @@ void Pendulum::keyboard_controll()
 
 void Pendulum::box_movement(float dt)
 {
-    //std::cout << box_v << " | " << "\n";// << "|" << direction.y << "\n";
     sf::Vector2f BASE_VECTOR = {1,0};
     float d_coafficient = 0.001f;
     sf::Vector2f pos = box.getPosition();
@@ -117,7 +114,7 @@ void Pendulum::pen_movement(float dt)
     //vector for calcuating force direction
     sf::Vector2f calc_direction = (ball.getPosition()-box.getPosition());
 
-    //90 degrees Formula: \((x, y) \rightarrow (y, -x)\) dir.angleTo(BASEVECTOR).asDegrees()
+    //90 degrees Formula
     sf::Vector2f dir = {calc_direction.y,-calc_direction.x};
     
     //normalise and change orientation because lazy -1
@@ -137,24 +134,13 @@ void Pendulum::pen_movement(float dt)
     float sin_theta = std::sin(get_angle());
     float F = sin_theta*MASS*GRAVITY;
     float a = F/MASS;
-    float inertial_acceleration = (sin_theta)*(box_acceleration*MASS)/MASS;
+    float inertial_acceleration =  sin_theta * box_acceleration*MASS/MASS;
 
 
     // vel with air resistance
-    local_v += (a - d_coafficient*local_v*abs(local_v)-(inertial_acceleration))*dt;
+    local_v += (a - d_coafficient*local_v*abs(local_v)-inertial_acceleration)*dt;
     this->v = local_v;
-    //float local_omega = local_v/length;
-    //theta -= local_omega*dt;
-    //sf::Vector2f pos = {length,sf::radians(theta)};
-    
-    
-
-    //std::cout << get_angle() << " | ";// << "|" << direction.y << "\n";
-
-
     ball.move(local_v*dir*dt);
-
-    //ball.setPosition(pos);
 }
 
 void Pendulum::movement(float dt)
