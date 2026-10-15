@@ -9,12 +9,11 @@ NeuralNetwork::NeuralNetwork(const std::vector<int>& architecture) : architectur
         int input_size = architecture[i-1];
         int output_size = architecture[i];
 
-        weights.push_back(std::vector<float>(input_size * output_size));
+        weights.emplace_back(std::vector<float>(input_size * output_size));
         bias.push_back(std::vector<float>(output_size, 0.0f)); // initialize bias vectors to 0.0f
         cache.activation.push_back({});
         cache.pre_activation.push_back({});
-        
-    };
+    }
     initialize_weights();
 };
 
@@ -63,7 +62,7 @@ float NeuralNetwork::ReLU(float x)
 //Convert output into normalized positive outputs
 std::vector<float> NeuralNetwork::softmax(const std::vector<float>& input)
 {
-    std::vector<float> output(input.size(),0.0f);  
+    std::vector<float> output(input.size(), 0.0f);  
     float sum = 0;
     float max_value = input[0];
 

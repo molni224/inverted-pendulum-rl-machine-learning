@@ -26,7 +26,7 @@ while (window.isOpen())
     while (const std::optional<sf::Event> event = window.pollEvent())
     {
         if (event->is<sf::Event::Closed>())
-        window.close();
+            window.close();
     }
     
     window.clear();
@@ -50,34 +50,31 @@ while (window.isOpen())
 
     env.pen_draw(window);
 
-    // testing cache p to pause and write out cache
-bool pause = false;
-if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P)))
-{
-    std::cout << "--------------------------------------------------------------------------------------\n";
-    pause = !pause;
-    for (auto i : actor.get_network().get_cache().activation)
+    // testing cache p to stop and write out cache
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P))
     {
-        std::cout << "_________________________________________________________________________________________\n";
-        for (auto x : i)
+        std::cout << "--------------------------------------------------------------------------------------\n";
+        for (auto &i : actor.get_network().get_cache().activation)
         {
-            std::cout << x << ' ';
+            std::cout << "_________________________________________________________________________________________\n";
+            std::cout << i.size() << std::endl << std::endl;
+            for (auto &x : i)
+            {
+                std::cout << x << ' ';
+            }
+            std::cout <<"\n\n";
         }
-        std::cout <<"\n\n";
+        window.close();
     }
-}
-while (pause)
-{
-}
-actor.clear_network_cache();
-if ((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R)))
-    {
-        state = env.reset();
-        traj.clear();
-        done = false;
-        timer = 0;
+    actor.clear_network_cache();
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R))
+        {
+            state = env.reset();
+            traj.clear();
+            done = false;
+            timer = 0;
+        }
+        
+        window.display();
     }
-    
-    window.display();
-}
 }
