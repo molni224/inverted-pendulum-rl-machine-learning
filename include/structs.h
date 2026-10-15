@@ -30,7 +30,7 @@ struct ForwardsCache
     void clear()
     {
         inputs.clear();
-    for (size_t i = 0; i < inputs.size(); i++)
+    for (size_t i = 0; i < pre_activation.size(); i++)
     {
         pre_activation[i].clear();
         activation[i].clear();
